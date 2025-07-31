@@ -30,16 +30,29 @@ jobs:
       - name: Run Unit Tests
         run: go test ./...
 
-  lint:
+  code-quality:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22.0' # Match your local dev version
 
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
           version: v1.56.2
+          install-mode: binary
+          github-token: ${{ secrets.TOKEN }}
+          verify: true
+          only-new-issues: false
+          skip-cache: false
+          skip-save-cache: false
+          problem-matchers: false
+          cache-invalidation-interval: 7
 
   push-image:
     runs-on: ubuntu-latest
